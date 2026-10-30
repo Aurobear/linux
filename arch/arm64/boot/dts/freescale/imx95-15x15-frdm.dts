@@ -1045,3 +1045,26 @@
 &wdog3 {
 	status = "okay";
 };
+
+/* NXP accelerator nodes; camera sensor/CSI graph is configured separately. */
+&neoisp0 {
+	status = "okay";
+};
+
+&vpu0 {
+	status = "okay";
+};
+
+&vpuctrl {
+	boot = <&vpu_boot>;
+	sram = <&sram1>;
+	status = "okay";
+};
+
+&neutron_core {
+	status = "okay";
+};
+
+&neutron {
+	status = "okay";
+};

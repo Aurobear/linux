@@ -1957,8 +1957,9 @@
 			bus-range = <0x00 0xff>;
 			num-lanes = <1>;
 			num-viewport = <8>;
-			interrupts = <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>;
-			interrupt-names = "msi";
+			interrupts = <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "msi", "dma";
 			#interrupt-cells = <1>;
 			interrupt-map-mask = <0 0 0 0x7>;
 			interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>,
@@ -2044,8 +2045,9 @@
 			bus-range = <0x00 0xff>;
 			num-lanes = <1>;
 			num-viewport = <8>;
-			interrupts = <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>;
-			interrupt-names = "msi";
+			interrupts = <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "msi", "dma";
 			#interrupt-cells = <1>;
 			interrupt-map-mask = <0 0 0 0x7>;
 			interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
@@ -2113,6 +2115,150 @@
 						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
 			msi-map = <0x0 &its 0x98 0x1>;
 			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
+			status = "disabled";
+		};
+
+		cameramix_csr: syscon@4ac10000 {
+			compatible = "nxp,imx95-camera-csr", "syscon";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			reg = <0x0 0x4ac10000 0x0 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&scmi_clk IMX95_CLK_CAMAPB>;
+			power-domains = <&scmi_devpd IMX95_PD_CAMERA>;
+		};
+
+		isi: isi@4ad50000 {
+			compatible = "fsl,imx95-isi";
+			reg = <0x0 0x4ad50000 0x0 0x80000>;
+			interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&scmi_clk IMX95_CLK_CAMISI>;
+			clock-names = "axi";
+			fsl,blk-ctrl = <&cameramix_csr>;
+			power-domains = <&scmi_devpd IMX95_PD_CAMERA>;
+			status = "disabled";
+
+			ports {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				port@0 {
+					reg = <0>;
+				};
+
+				port@1 {
+					reg = <1>;
+				};
+
+				port@2 {
+					reg = <2>;
+				};
+
+				port@3 {
+					reg = <3>;
+				};
+			};
+		};
+
+		neoisp0: isp@4ae00000 {
+			compatible = "nxp,imx95-neoisp";
+			reg = <0x0 0x4ae00000 0x0 0x8000>,
+			      <0x0 0x4afe0000 0x0 0x10000>;
+			reg-names = "registers", "stats";
+			interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cameramix_csr IMX95_CLK_CAMBLK_ISP_AXI>,
+				 <&cameramix_csr IMX95_CLK_CAMBLK_ISP_PIXEL>,
+				 <&cameramix_csr IMX95_CLK_CAMBLK_ISP>;
+			clock-names = "camblk_isp_axi", "camblk_isp_pixel", "camblk_isp";
+			power-domains = <&scmi_devpd IMX95_PD_CAMERA>;
+			nxp,blk-ctrl = <&cameramix_csr>;
+			status = "disabled";
+		};
+
+		vpu0: vpu@4c480000 {
+			compatible = "fsl,cnm633c-vpu";
+			reg = <0x0 0x4c480000 0x0 0x10000>;
+			interrupts = <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&scmi_clk IMX95_CLK_VPU>,
+				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+			clock-names = "vpu", "vpublk_wave";
+			power-domains = <&scmi_devpd IMX95_PD_VPU>;
+			cnm,ctrl = <&vpuctrl>;
+			status = "disabled";
+		};
+
+		vpu1: vpu@4c490000 {
+			compatible = "fsl,cnm633c-vpu";
+			reg = <0x0 0x4c490000 0x0 0x10000>;
+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&scmi_clk IMX95_CLK_VPU>,
+				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+			clock-names = "vpu", "vpublk_wave";
+			power-domains = <&scmi_devpd IMX95_PD_VPU>;
+			cnm,ctrl = <&vpuctrl>;
+			status = "disabled";
+		};
+
+		vpu2: vpu@4c4a0000 {
+			compatible = "fsl,cnm633c-vpu";
+			reg = <0x0 0x4c4a0000 0x0 0x10000>;
+			interrupts = <GIC_SPI 301 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&scmi_clk IMX95_CLK_VPU>,
+				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+			clock-names = "vpu", "vpublk_wave";
+			power-domains = <&scmi_devpd IMX95_PD_VPU>;
+			cnm,ctrl = <&vpuctrl>;
+			status = "disabled";
+		};
+
+		vpu3: vpu@4c4b0000 {
+			compatible = "fsl,cnm633c-vpu";
+			reg = <0x0 0x4c4b0000 0x0 0x10000>;
+			interrupts = <GIC_SPI 302 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&scmi_clk IMX95_CLK_VPU>,
+				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+			clock-names = "vpu", "vpublk_wave";
+			power-domains = <&scmi_devpd IMX95_PD_VPU>;
+			cnm,ctrl = <&vpuctrl>;
+			status = "disabled";
+		};
+
+		vpuctrl: vpu-ctrl@4c4c0000 {
+			compatible = "fsl,cm633c-vpu-ctrl";
+			reg = <0x0 0x4c4c0000 0x0 0x10000>;
+			clocks = <&scmi_clk IMX95_CLK_VPU>,
+				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_WAVE>;
+			clock-names = "vpu", "vpublk_wave";
+			power-domains = <&scmi_devpd IMX95_PD_VPU>, <&scmi_perf IMX95_PERF_VPU>;
+			power-domain-names = "vpumix", "vpuperf";
+			#cooling-cells = <2>;
+			status = "disabled";
+		};
+
+		neutron_core: imx95-neutron-remoteproc@4ab00000 {
+			compatible = "fsl,imx95-neutron-rproc";
+			reg = <0x0 0x4ab00000 0x0 0x4>;
+			power-domains = <&scmi_devpd IMX95_PD_NPU>;
+			status = "disabled";
+		};
+
+		neutron: imx95-neutron@4ab00004 {
+			compatible = "fsl,imx95-neutron";
+			reg = <0x0 0x4ab00004 0x0 0x400>;
+			fsl,neutron-rproc = <&neutron_core>;
+			interrupts = <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&scmi_clk IMX95_CLK_NPU>,
+				 <&scmi_clk IMX95_CLK_NPUAPB>;
+			clock-names = "npu", "npu_apb";
+			power-domains = <&scmi_devpd IMX95_PD_NPU>;
+			iommus = <&smmu 0xd>;
 			status = "disabled";
 		};
 
@@ -2297,7 +2443,14 @@
 				     <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
 			interrupt-names = "job", "mmu", "gpu";
 			operating-points-v2 = <&gpu_opp_table>;
-			power-domains = <&scmi_devpd IMX95_PD_GPU>;
+			/*
+			 * gpumix gates the GPU power rail, gpuperf is the SCMI performance
+			 * domain that owns the GPU DVFS levels. Both are listed by the
+			 * NXP reference DT for this SoC; without gpuperf the GPU is only
+			 * clocked through IMX95_CLK_GPU_CGC.
+			 */
+			power-domains = <&scmi_devpd IMX95_PD_GPU>, <&scmi_perf IMX95_PERF_GPU>;
+			power-domain-names = "gpumix", "gpuperf";
 			#cooling-cells = <2>;
 			dynamic-power-coefficient = <1013>;
 		};
