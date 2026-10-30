@@ -379,6 +379,13 @@ config XLNX_R5_REMOTEPROC
 
 	  It's safe to say N if not interested in using RPU r5f cores.
 
+config IMX_NEUTRON_REMOTEPROC
+	tristate "i.MX Neutron remoteproc support"
+	depends on ARCH_MXC
+	depends on REMOTEPROC
+	help
+	  Load firmware for the i.MX95 Neutron NPU.
+
 endif # REMOTEPROC
 
 endmenu
