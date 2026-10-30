@@ -4,3 +4,6 @@ comment "Chips&Media media platform drivers"
 
 source "drivers/media/platform/chips-media/coda/Kconfig"
 source "drivers/media/platform/chips-media/wave5/Kconfig"
+
+source "drivers/media/platform/chips-media/imx-memory-usage/Kconfig"
+source "drivers/media/platform/chips-media/wave6/Kconfig"
